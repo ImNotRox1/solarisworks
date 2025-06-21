@@ -224,7 +224,7 @@ local function CreateNotificationUI(titleText, descText)
 	Frame.ClipsDescendants = true
 	Frame.ZIndex = 999999
 
-    local Ripple = Ripple(Frame)
+    Ripple(Frame)
 
 	local UICorner = Instance.new("UICorner", Frame)
 	UICorner.CornerRadius = UDim.new(0, 6)
