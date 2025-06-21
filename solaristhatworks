@@ -145,10 +145,72 @@ local SolarisLib = {
     CurrentTab
 }
 
-
-
 local MainUI = game:GetObjects("rbxassetid://7835727566")[1]
 print("SolarisLib Loaded!")
+local NotifyFrame = Instance.new("Frame")
+NotifyFrame.Size = UDim2.new(0, 300, 0, 100)
+NotifyFrame.Position = UDim2.new(1, 10, 1, -110)
+NotifyFrame.BackgroundTransparency = 0.2
+NotifyFrame.BorderSizePixel = 0
+NotifyFrame.Visible = false
+NotifyFrame.Name = "Notification"
+NotifyFrame.ZIndex = 999999
+NotifyFrame.Parent = Solaris
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(1, -10, 0, 30)
+TitleLabel.Position = UDim2.new(0, 5, 0, 5)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextSize = 18
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.ZIndex = 999999
+TitleLabel.Parent = NotifyFrame
+
+local DescLabel = Instance.new("TextLabel")
+DescLabel.Size = UDim2.new(1, -10, 0, 60)
+DescLabel.Position = UDim2.new(0, 5, 0, 35)
+DescLabel.BackgroundTransparency = 1
+DescLabel.Font = Enum.Font.Gotham
+DescLabel.TextSize = 14
+DescLabel.TextWrapped = true
+DescLabel.TextXAlignment = Enum.TextXAlignment.Left
+DescLabel.TextYAlignment = Enum.TextYAlignment.Top
+DescLabel.ZIndex = 999999
+DescLabel.Parent = NotifyFrame
+
+spawn(function()
+	while true do
+		task.wait()
+		local theme = SolarisLib.Themes[SolarisLib.Settings.Theme]
+		NotifyFrame.BackgroundColor3 = theme.TopBar
+		TitleLabel.TextColor3 = theme.TextColor
+		DescLabel.TextColor3 = theme.TextColor
+	end
+end)
+
+local Notify = {}
+function Notify:New(title, desc)
+	TitleLabel.Text = title
+	DescLabel.Text = desc
+	NotifyFrame.Visible = true
+
+	NotifyFrame.Position = UDim2.new(1, 10, 1, -110)
+	TweenService:Create(NotifyFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		Position = UDim2.new(1, -310, 1, -110)
+	}):Play()
+
+	task.delay(3, function()
+		TweenService:Create(NotifyFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+			Position = UDim2.new(1, 10, 1, -110)
+		}):Play()
+		task.wait(0.4)
+		NotifyFrame.Visible = false
+	end)
+end
+
+SolarisLib.Notify = Notify
+
 local function MakeDraggable(topbarobject, object) 
     pcall(function()
 		local dragging, dragInput, mousePos, framePos = false
