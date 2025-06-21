@@ -213,7 +213,7 @@ NotificationLayout.Parent = NotificationHolder
 NotificationLayout.SortOrder = Enum.SortOrder.LayoutOrder
 NotificationLayout.Padding = UDim.new(0, 8)
 
-local function CreateNotificationUI(titleText, descText)
+local function CreateNotificationUI(titleText, descText, iconId)
 	local theme = SolarisLib.Themes[SolarisLib.Settings.Theme]
 
 	local Frame = Instance.new("Frame")
@@ -224,53 +224,75 @@ local function CreateNotificationUI(titleText, descText)
 	Frame.ClipsDescendants = true
 	Frame.ZIndex = 999999
 
-    Ripple(Frame)
-
 	local UICorner = Instance.new("UICorner", Frame)
 	UICorner.CornerRadius = UDim.new(0, 6)
 
+	local UIStroke = Instance.new("UIStroke", Frame)
+	UIStroke.Color = Color3.fromRGB(0, 0, 0)
+	UIStroke.Transparency = 0.8
+	UIStroke.Thickness = 1
+
+	local Shadow = Instance.new("ImageLabel")
+	Shadow.Name = "Shadow"
+	Shadow.Image = "rbxassetid://1316045217"
+	Shadow.BackgroundTransparency = 1
+	Shadow.ScaleType = Enum.ScaleType.Slice
+	Shadow.SliceCenter = Rect.new(10, 10, 118, 118)
+	Shadow.Size = UDim2.new(1, 12, 1, 12)
+	Shadow.Position = UDim2.new(0, -6, 0, -6)
+	Shadow.ZIndex = 999998
+	Shadow.Parent = Frame
+
+	local Icon = Instance.new("ImageLabel")
+	Icon.Name = "Icon"
+	Icon.Image = iconId or "rbxassetid://6031071053"
+	Icon.Size = UDim2.new(0, 20, 0, 20)
+	Icon.Position = UDim2.new(0, 10, 0, 10)
+	Icon.BackgroundTransparency = 1
+	Icon.ImageColor3 = theme.TextColor
+	Icon.ZIndex = 999999
+	Icon.Parent = Frame
+
 	local Title = Instance.new("TextLabel")
 	Title.Parent = Frame
-	Title.Size = UDim2.new(1, -20, 0, 22)
-	Title.Position = UDim2.new(0, 10, 0, 6)
+	Title.Size = UDim2.new(1, -40, 0, 20)
+	Title.Position = UDim2.new(0, 36, 0, 8)
 	Title.Text = titleText
 	Title.Font = Enum.Font.GothamBold
-	Title.TextSize = 16
+	Title.TextSize = 15
 	Title.TextColor3 = theme.TextColor
 	Title.BackgroundTransparency = 1
 	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.ZIndex = 999999
 
 	local Desc = Instance.new("TextLabel")
 	Desc.Parent = Frame
-	Desc.Size = UDim2.new(1, -20, 1, -34)
-	Desc.Position = UDim2.new(0, 10, 0, 28)
+	Desc.Size = UDim2.new(1, -40, 1, -32)
+	Desc.Position = UDim2.new(0, 36, 0, 28)
 	Desc.Text = descText
 	Desc.Font = Enum.Font.Gotham
-	Desc.TextSize = 14
+	Desc.TextSize = 13
 	Desc.TextColor3 = theme.TextColor
 	Desc.BackgroundTransparency = 1
 	Desc.TextWrapped = true
 	Desc.TextXAlignment = Enum.TextXAlignment.Left
 	Desc.TextYAlignment = Enum.TextYAlignment.Top
+	Desc.ZIndex = 999999
 
 	return Frame
 end
 
--- Show one notification
-local function ShowSolarisNotification(title, desc)
-	local notif = CreateNotificationUI(title, desc)
+local function ShowSolarisNotification(title, desc, iconId)
+	local notif = CreateNotificationUI(title, desc, iconId)
 	notif.Parent = NotificationHolder
 	notif.BackgroundTransparency = 1
-	notif.Position = UDim2.new(1, 0, 1, 0)
 	notif.Size = UDim2.new(1, 0, 0, 0)
 
-	-- Animate In
 	TweenService:Create(notif, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 		Size = UDim2.new(1, 0, 0, 70),
 		BackgroundTransparency = 0
 	}):Play()
 
-	-- Auto fade after 4s
 	task.delay(4, function()
 		TweenService:Create(notif, TweenInfo.new(0.25), {
 			BackgroundTransparency = 1
@@ -280,7 +302,6 @@ local function ShowSolarisNotification(title, desc)
 	end)
 end
 
--- Dynamic theme updating
 spawn(function()
 	while true do
 		task.wait()
@@ -298,7 +319,6 @@ spawn(function()
 	end
 end)
 
--- Bind to SolarisLib
 SolarisLib.Notification = function(_, title, desc)
 	ShowSolarisNotification(title, desc)
 end
