@@ -213,81 +213,54 @@ NotificationLayout.Parent = NotificationHolder
 NotificationLayout.SortOrder = Enum.SortOrder.LayoutOrder
 NotificationLayout.Padding = UDim.new(0, 8)
 
-local function CreateNotificationUI(titleText, descText, iconId)
+local function CreateNotificationUI(titleText, descText)
 	local theme = SolarisLib.Themes[SolarisLib.Settings.Theme]
 
-	-- Main holder
 	local Frame = Instance.new("Frame")
-	Frame.BackgroundColor3 = theme.TopBar
-	Frame.Size = UDim2.new(1, 0, 0, 70)
 	Frame.BackgroundTransparency = 0
+	Frame.Size = UDim2.new(1, 0, 0, 70)
+	Frame.BackgroundColor3 = theme.TopBar
 	Frame.BorderSizePixel = 0
-	Frame.ClipsDescendants = false
-	Frame.ZIndex = 999998
+	Frame.ClipsDescendants = true
+	Frame.ZIndex = 999999
 
-	-- Drop Shadow
-	local Shadow = Instance.new("ImageLabel")
-	Shadow.Name = "DropShadow"
-	Shadow.Image = "rbxassetid://1316045217"
-	Shadow.BackgroundTransparency = 1
-	Shadow.ScaleType = Enum.ScaleType.Slice
-	Shadow.SliceCenter = Rect.new(10, 10, 118, 118)
-	Shadow.Size = UDim2.new(1, 16, 1, 16)
-	Shadow.Position = UDim2.new(0, -8, 0, -8)
-	Shadow.ZIndex = 999997
-	Shadow.Parent = Frame
+    Ripple(Frame)
 
-	-- Rounded corners
-	local Corner = Instance.new("UICorner")
-	Corner.CornerRadius = UDim.new(0, 6)
-	Corner.Parent = Frame
+	local UICorner = Instance.new("UICorner", Frame)
+	UICorner.CornerRadius = UDim.new(0, 6)
 
-	-- Icon
-	local Icon = Instance.new("ImageLabel")
-	Icon.Name = "Icon"
-	Icon.Image = iconId or "rbxassetid://6031071053" -- default info icon
-	Icon.Size = UDim2.new(0, 20, 0, 20)
-	Icon.Position = UDim2.new(0, 10, 0, 10)
-	Icon.BackgroundTransparency = 1
-	Icon.ImageColor3 = theme.TextColor
-	Icon.ZIndex = 999999
-	Icon.Parent = Frame
-
-	-- Title
 	local Title = Instance.new("TextLabel")
+	Title.Parent = Frame
+	Title.Size = UDim2.new(1, -20, 0, 22)
+	Title.Position = UDim2.new(0, 10, 0, 6)
 	Title.Text = titleText
 	Title.Font = Enum.Font.GothamBold
-	Title.TextSize = 15
-	Title.TextXAlignment = Enum.TextXAlignment.Left
-	Title.BackgroundTransparency = 1
+	Title.TextSize = 16
 	Title.TextColor3 = theme.TextColor
-	Title.Position = UDim2.new(0, 36, 0, 8)
-	Title.Size = UDim2.new(1, -44, 0, 18)
-	Title.ZIndex = 999999
-	Title.Parent = Frame
+	Title.BackgroundTransparency = 1
+	Title.TextXAlignment = Enum.TextXAlignment.Left
 
-	-- Description
 	local Desc = Instance.new("TextLabel")
+	Desc.Parent = Frame
+	Desc.Size = UDim2.new(1, -20, 1, -34)
+	Desc.Position = UDim2.new(0, 10, 0, 28)
 	Desc.Text = descText
 	Desc.Font = Enum.Font.Gotham
-	Desc.TextSize = 13
+	Desc.TextSize = 14
+	Desc.TextColor3 = theme.TextColor
+	Desc.BackgroundTransparency = 1
+	Desc.TextWrapped = true
 	Desc.TextXAlignment = Enum.TextXAlignment.Left
 	Desc.TextYAlignment = Enum.TextYAlignment.Top
-	Desc.TextWrapped = true
-	Desc.BackgroundTransparency = 1
-	Desc.TextColor3 = theme.TextColor
-	Desc.Position = UDim2.new(0, 36, 0, 28)
-	Desc.Size = UDim2.new(1, -44, 1, -34)
-	Desc.ZIndex = 999999
-	Desc.Parent = Frame
 
 	return Frame
 end
 
-local function ShowSolarisNotification(title, desc, iconId)
-	local notif = CreateNotificationUI(title, desc, iconId)
+local function ShowSolarisNotification(title, desc)
+	local notif = CreateNotificationUI(title, desc)
 	notif.Parent = NotificationHolder
 	notif.BackgroundTransparency = 1
+	notif.Position = UDim2.new(1, 0, 1, 0)
 	notif.Size = UDim2.new(1, 0, 0, 0)
 
 	TweenService:Create(notif, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
@@ -321,17 +294,17 @@ spawn(function()
 	end
 end)
 
-SolarisLib.Notification = function(_, title, desc, id)
-	ShowSolarisNotification(title, des, id)
+SolarisLib.Notification = function(_, title, desc)
+	ShowSolarisNotification(title, desc)
 end
 SolarisLib.Notify = {
-	New = function(_, title, desc, id)
-		ShowSolarisNotification(title, desc, id)
+	New = function(_, title, desc)
+		ShowSolarisNotification(title, desc)
 	end
 }
 
-function SolarisLib:Notification(title, desc, id)
-    SolarisLib.Notify:New(title, desc, id)
+function SolarisLib:Notification(title, desc)
+    SolarisLib.Notify:New(title, desc)
 end
 
 function SolarisLib:New(Config)
